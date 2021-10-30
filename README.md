@@ -5,3 +5,4 @@
 5. multithreading - jc
 6. ncurses - joshua / redy
 7. input from switch
+8. Auditory with sound frequency follow waves

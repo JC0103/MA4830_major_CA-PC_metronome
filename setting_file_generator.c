@@ -19,7 +19,7 @@ void ReadSettings(){
     fscanf(fp, "%*s %s", waveforms);
     fscanf(fp, "%*s %f", &frequency);
     fscanf(fp, "%*s %f", &amplitude);
-
+    fclose(fp);
 }
 
 int main(){
