@@ -1,0 +1,3 @@
+Waveforms: Sine
+Frequency(Hz): 2.000000
+Amplitude: 2.300000
