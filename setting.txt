@@ -1,0 +1,3 @@
+Waveforms: 2
+Frequency(Hz): 12.000000
+Amplitude: 23.000000
