@@ -109,7 +109,8 @@ float delta,dummy;
 //**********************************************************************************************
 
 //TODO: Set amp only take input from 0-100	
-int amp = 10;	
+int amp = 10;
+float freq = 1.0;	
 float step = 100;														
 float amplitude = amp/100.0 * 0xFFFF;
 delta=(2.0*3.142)/step;					// increment
@@ -137,12 +138,10 @@ for(i=0;i<step;i++) {
 
 //Sawtooth Waves
 delta = 1 / step;
-linear_func = 0.0;
  for(i=0;i<step;i++){
     dummy = i * delta * amplitude;
     data[i]= (unsigned) dummy;
  }
-
 
 //*********************************************************************************************
 // Output wave
@@ -151,13 +150,14 @@ linear_func = 0.0;
 
 //TODO: implement freqeuncy using delay here
 // while(1) {
-// for(i=0;i<50;i++) {
+// for(i=0;i<step;i++) {
 // 	out16(DA_CTLREG,0x0a23);			// DA Enable, #0, #1, SW 5V unipolar		2/6 (pg.23)
-//   out16(DA_FIFOCLR, 0);					// Clear DA FIFO  buffer  
-//   out16(DA_Data,(short) data[i]);																																		
-//   out16(DA_CTLREG,0x0a43);			// DA Enable, #1, #1, SW 5V unipolar		2/6 (pg.23)
-//   out16(DA_FIFOCLR, 0);					// Clear DA FIFO  buffer
-// 	out16(DA_Data,(short) data[i]);																																		
+//     out16(DA_FIFOCLR, 0);					// Clear DA FIFO  buffer  
+//     out16(DA_Data,(short) data[i]);																																		
+//     out16(DA_CTLREG,0x0a43);			// DA Enable, #1, #1, SW 5V unipolar		2/6 (pg.23)
+//     out16(DA_FIFOCLR, 0);					// Clear DA FIFO  buffer
+// 	out16(DA_Data,(short) data[i]);
+//     delay(1/(freq * step));
 //   	}
 // }
   	
