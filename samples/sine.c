@@ -108,7 +108,7 @@ if(ThreadCtl(_NTO_TCTL_IO,0)==-1) {
 
 delta=(2.0*3.142)/50.0;					// increment
 for(i=0;i<50;i++) {
-  dummy= ((sinf((float)(i*delta))) + 1.0) * 0x8000 ;
+  dummy= ((sinf((float)(i*delta))) + 1.0) * 0x8000 ;   // Amplitude: 0x8000 x 2 (maximum)
   data[i]= (unsigned) dummy;			// add offset +  scale
  }
 
@@ -118,11 +118,11 @@ for(i=0;i<50;i++) {
 
 while(1) {
 for(i=0;i<50;i++) {
-	out16(DA_CTLREG,0x0a23);			// DA Enable, #0, #1, SW 5V unipolar		2/6
-   	out16(DA_FIFOCLR, 0);					// Clear DA FIFO  buffer
-   	out16(DA_Data,(short) data[i]);																																		
-   	out16(DA_CTLREG,0x0a43);			// DA Enable, #1, #1, SW 5V unipolar		2/6
-  	out16(DA_FIFOCLR, 0);					// Clear DA FIFO  buffer
+	out16(DA_CTLREG,0x0a23);			// DA Enable, #0, #1, SW 5V unipolar		2/6 (pg.23)
+  out16(DA_FIFOCLR, 0);					// Clear DA FIFO  buffer  
+  out16(DA_Data,(short) data[i]);																																		
+  out16(DA_CTLREG,0x0a43);			// DA Enable, #1, #1, SW 5V unipolar		2/6 (pg.23)
+  out16(DA_FIFOCLR, 0);					// Clear DA FIFO  buffer
 	out16(DA_Data,(short) data[i]);																																		
   	}
 }
