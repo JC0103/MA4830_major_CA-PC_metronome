@@ -1,3 +1,11 @@
+/******************************************************************************
+
+                            Online C Compiler.
+                Code, Compile, Run and Debug C program online.
+Write your code in this editor and press "Run" button to compile and execute it.
+
+*******************************************************************************/
+
 #include <stdio.h>
 #include <ncurses.h>
 #include <stdlib.h>
@@ -33,12 +41,12 @@ ushort printwave(double amplitude, double period,
     switch (choice){
       case 1:
       // Sine 
-      y = sin(period*x*ratio);
+      y = sin(period*x*ratio) * 0.5;
       break; 
       
       case 2:
       // Square
-      y = ((int)x % period2) < period2/2 ? ratio:-ratio;
+      y = ((int)x % period2) < period2/2 ? 0.5:-0.5;
       break; 
 
       case 3:
