@@ -6,34 +6,34 @@
 
 #define DEFAULT_AMPLITUDE 1
 #define DEFAULT_PERIOD .35
-#define DEFAULT_DELAY_MULTIPLIER 150
-#define BASE_DELAY 100
+#define DEFAULT_DELAY_MULTIPLIER 255
+#define BASE_DELAY 1000
 
 //Color count
 #define NUM_COLORS 6
 
 typedef unsigned short ushort;
+double x; double y; int period2; double ratio;
 
 ushort printwave(double amplitude, double period,
     short phase_shift, ushort color_index) {
 
-  double x; double y; int period2; double ratio;
   for (x=0.0; x < (COLS+phase_shift) ; x += 1.0) {
 
     // Swap color
     color_index += 1;
     // attron(COLOR_PAIR((color_index % NUM_COLORS)+1));
-
+		
     // Find Y 
     ratio = (2.0*M_PI)/LINES;
     
     period2 = 40 - (int)(period *40) % 40;
     // Sine 
-    y = sin(period*x*ratio); 
+    //y = sin(period*x*ratio); 
      // Square
     // y = ((int)x % period2) < period2/2 ? ratio:-ratio; 
     // // Sawtooth
-    // double y = -(((int)x % period2) - 0.5*period2) / (float)period2 ;
+    y = -(((int)x % period2) - 0.5*period2) / (float)period2 ;
     // // Triangle 
     // double y = ((int)x % (period2*2)) >= period2 ? ((period2 - (int)x % period2) - 0.5*period2) / (float)period2 : (((int)x % period2) - 0.5*period2) / (float)period2;
     y *= amplitude; 
@@ -41,7 +41,6 @@ ushort printwave(double amplitude, double period,
 
     // Print cell
     mvprintw((int)(y), (int)(x-phase_shift), " ");
-
   }
 
   return color_index;
@@ -53,6 +52,7 @@ short phase_shift;
 double amplitude;
 double period;
  
+
 int main(int argc, char* argv[]) {
 
   // Curses init
@@ -64,14 +64,7 @@ int main(int argc, char* argv[]) {
   curs_set(0);
   keypad(screen, TRUE);
 
-  // Color pairs
-  init_pair(1, COLOR_RED, COLOR_BLACK); 
-  init_pair(2, COLOR_GREEN, COLOR_BLACK); 
-  init_pair(3, COLOR_YELLOW, COLOR_BLACK);
-  init_pair(4, COLOR_BLUE, COLOR_BLACK);
-  init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
-  init_pair(6, COLOR_CYAN, COLOR_BLACK);
-  init_pair(7, COLOR_WHITE, COLOR_BLACK);
+  // Dot settings
   attron(A_BOLD);
   attron(A_STANDOUT);
 
@@ -84,10 +77,9 @@ int main(int argc, char* argv[]) {
   while (1) {
 
     erase();
+    printwave(amplitude, period, phase_shift, color_index);
 
-    color_index = printwave(amplitude, period, phase_shift, color_index);
-
-    attron(COLOR_PAIR(7));
+    
     mvprintw(0, 0, "PERIOD %.2f", period);
     mvprintw(1, 0, "AMP: %.2f", amplitude);
     mvprintw(2, 0, "PHASE: %d", phase_shift);
@@ -128,7 +120,6 @@ int main(int argc, char* argv[]) {
     }
 
     usleep(BASE_DELAY*delayx);
-
     phase_shift += 1; 
 
     if (phase_shift*period >= LINES)
