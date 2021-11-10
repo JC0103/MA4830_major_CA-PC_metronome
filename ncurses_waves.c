@@ -22,16 +22,16 @@ ushort printwave(double amplitude, double period,
 
     // Swap color
     color_index += 1;
-    attron(COLOR_PAIR((color_index % NUM_COLORS)+1));
+    // attron(COLOR_PAIR((color_index % NUM_COLORS)+1));
 
     // Find Y 
     ratio = (2.0*M_PI)/LINES;
     
     period2 = 40 - (int)(period *40) % 40;
     // Sine 
-    //y = sin(period*x*ratio); 
+    y = sin(period*x*ratio); 
      // Square
-    y = ((int)x % period2) < period2/2 ? ratio:-ratio; 
+    // y = ((int)x % period2) < period2/2 ? ratio:-ratio; 
     // // Sawtooth
     // double y = -(((int)x % period2) - 0.5*period2) / (float)period2 ;
     // // Triangle 
