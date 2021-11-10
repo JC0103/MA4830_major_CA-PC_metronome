@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <unistd.h>
+#include <string.h>
 
 #define DEFAULT_AMPLITUDE 1
 #define DEFAULT_PERIOD .35
@@ -54,14 +55,12 @@ ushort printwave(double amplitude, double period,
     }
 
     y *= amplitude; 
-    y += LINES/2;
+    y += (LINES+10)/2;
 
     // Print cell
     mvprintw((int)(y), (int)(x-phase_shift), " ");
   }
-
   return color_index;
-
 }
 unsigned char delayx;
 ushort color_index;
@@ -70,11 +69,22 @@ double amplitude;
 double period;
 int choice;
 
+char *choices[] = { 
+            "Sine_Wave",
+            "Square_Wave",
+            "Triangular_Wave",
+            "Sawtooth_Wave",
+            };
+
 int main(int argc, char* argv[]) {
+
+  char title[]="The HOLA Metronome\n";
+  int title_row, title_column;
 
   // Curses init
   WINDOW* screen = initscr();
-  start_color();
+
+  //start_color();
   nodelay(screen, 1);
   cbreak();
   noecho();
@@ -82,27 +92,32 @@ int main(int argc, char* argv[]) {
   keypad(screen, TRUE);
 
   // Dot settings
-  attron(A_BOLD);
+  //attron(A_BOLD);
   attron(A_STANDOUT);
 
   // Wave attributes
   delayx = DEFAULT_DELAY_MULTIPLIER;
   color_index = 0;
   phase_shift = 0;
-  choice = 3;
-  amplitude = (LINES/2)*DEFAULT_AMPLITUDE; 
+  choice = 1;
+  amplitude = (LINES/2)*DEFAULT_AMPLITUDE-5; 
   period = DEFAULT_PERIOD;
   while (1) {
 
     erase();
     printwave(amplitude, period, phase_shift, color_index, choice);
 
-    
-    mvprintw(0, 0, "PERIOD %.2f", period);
-    mvprintw(1, 0, "AMP: %.2f", amplitude);
-    mvprintw(2, 0, "PHASE: %d", phase_shift);
-    mvprintw(3, 0, "DELAY: x%hu", delayx);
-    mvprintw(4, 0, "CHOICE: %d", choice);
+    // Display title at top row and middle column.
+    getmaxyx(stdscr,title_row,title_column);
+    //attron(A_BOLD);
+    mvprintw(0, (title_column-strlen(title))/2, "%s", title);
+    //attroff(A_BOLD);
+
+    mvprintw(2, (title_column-strlen(title))*2/3, "PERIOD: %8.2f", period);
+    mvprintw(3, (title_column-strlen(title))*2/3, "AMPLITUDE: %.2f", amplitude);
+    mvprintw(4, (title_column-strlen(title))*2/3, "PHASE: %7d", phase_shift);
+    mvprintw(5, (title_column-strlen(title))*2/3, "DELAY:    x%2.2hu", delayx);
+    mvprintw(5, 2, "CHOICE: %s", choices[choice-1]);
 
     refresh();
 
