@@ -6,7 +6,7 @@
 
 #define DEFAULT_AMPLITUDE 1
 #define DEFAULT_PERIOD .35
-#define DEFAULT_DELAY_MULTIPLIER 255
+#define DEFAULT_DELAY_MULTIPLIER 150
 #define BASE_DELAY 1000
 
 //Color count
@@ -16,7 +16,7 @@ typedef unsigned short ushort;
 double x; double y; int period2; double ratio;
 
 ushort printwave(double amplitude, double period,
-    short phase_shift, ushort color_index) {
+    short phase_shift, ushort color_index, int choice) {
 
   for (x=0.0; x < (COLS+phase_shift) ; x += 1.0) {
 
@@ -28,14 +28,31 @@ ushort printwave(double amplitude, double period,
     ratio = (2.0*M_PI)/LINES;
     
     period2 = 40 - (int)(period *40) % 40;
-    // Sine 
-    //y = sin(period*x*ratio); 
-     // Square
-    // y = ((int)x % period2) < period2/2 ? ratio:-ratio; 
-    // // Sawtooth
-    y = -(((int)x % period2) - 0.5*period2) / (float)period2 ;
-    // // Triangle 
-    // double y = ((int)x % (period2*2)) >= period2 ? ((period2 - (int)x % period2) - 0.5*period2) / (float)period2 : (((int)x % period2) - 0.5*period2) / (float)period2;
+
+    switch (choice){
+      case 1:
+      // Sine 
+      y = sin(period*x*ratio);
+      break; 
+      
+      case 2:
+      // Square
+      y = ((int)x % period2) < period2/2 ? ratio:-ratio;
+      break; 
+
+      case 3:
+      // Sawtooth
+      y = -(((int)x % period2) - 0.5*period2) / (float)period2 ;
+      break;
+      
+      case 4:
+      // Triangle 
+      y = ((int)x % (period2*2)) >= period2 ? ((period2 - (int)x % period2) - 0.5*period2) / (float)period2 : (((int)x % period2) - 0.5*period2) / (float)period2;
+      break;
+
+      default: break;
+    }
+
     y *= amplitude; 
     y += LINES/2;
 
@@ -51,7 +68,7 @@ ushort color_index;
 short phase_shift;
 double amplitude;
 double period;
- 
+int choice;
 
 int main(int argc, char* argv[]) {
 
@@ -72,18 +89,20 @@ int main(int argc, char* argv[]) {
   delayx = DEFAULT_DELAY_MULTIPLIER;
   color_index = 0;
   phase_shift = 0;
+  choice = 3;
   amplitude = (LINES/2)*DEFAULT_AMPLITUDE; 
   period = DEFAULT_PERIOD;
   while (1) {
 
     erase();
-    printwave(amplitude, period, phase_shift, color_index);
+    printwave(amplitude, period, phase_shift, color_index, choice);
 
     
     mvprintw(0, 0, "PERIOD %.2f", period);
     mvprintw(1, 0, "AMP: %.2f", amplitude);
     mvprintw(2, 0, "PHASE: %d", phase_shift);
     mvprintw(3, 0, "DELAY: x%hu", delayx);
+    mvprintw(4, 0, "CHOICE: %d", choice);
 
     refresh();
 
@@ -112,6 +131,18 @@ int main(int argc, char* argv[]) {
         break;
       case '-':
         delayx -= 1;
+        break;
+      case '1':
+        choice = 1;
+        break;
+      case '2':
+        choice = 2;
+        break;
+      case '3':
+        choice = 3;
+        break;
+      case '4':
+        choice = 4;
         break;
       case 'q':
         endwin();
