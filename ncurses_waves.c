@@ -80,8 +80,8 @@ int choice;
 char *choices[] = { 
             "Sine_Wave",
             "Square_Wave",
-            "Triangular_Wave",
             "Sawtooth_Wave",
+            "Triangular_Wave",
             };
 
 int main(int argc, char* argv[]) {
