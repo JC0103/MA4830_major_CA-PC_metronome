@@ -176,10 +176,21 @@ int main(int argc, char* argv[]) {
     usleep(BASE_DELAY*delayx);
     phase_shift += 1; 
 
-    if (phase_shift*period >= LINES)
-      phase_shift = 0;
-  }
+    if (choice != 1 ){
+      if(phase_shift/period2 >= LINES){
+        //period = period2;
+        phase_shift = 0;
+      }
+    }
 
+    if (choice == 1 ){
+      if(phase_shift*period >= LINES){
+      phase_shift = 0;
+    }
+    
+    
+  }
+}
   endwin();
   return 0; 
 }
