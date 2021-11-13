@@ -9,7 +9,6 @@
 #define FLOAT_EPSILON 1e-6
 
 
-
 float freq;         // 0.1-10.0 Hz
 float amp;          // 1 - 100%  //TODO: Set amp only take input from 0-100	
 int waveforms;      // 1: Sine Wave

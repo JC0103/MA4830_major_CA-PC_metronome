@@ -39,10 +39,13 @@ int main(int argc, char **argv)
 
 	while(1) {
 		//Copy the wave parameters
+		sleep(1);
 		pthread_mutex_lock(&param_mutex);
+		
 		wave_main = waveforms;
 		freq_main = freq;
 		amp_main = amp;
+		printf("Wavesforms: %d\n", wave_main);
 		pthread_mutex_unlock(&param_mutex);
 
 		//Copy flags
@@ -51,7 +54,11 @@ int main(int argc, char **argv)
 		ncurses_loop_finished_main = ncurses_loop_finished;
 		pthread_mutex_unlock(&flag_mutex);
 
-		if (pci_loop_finished && ncurses_loop_finished) {
+		if (pci_loop_finished_main && ncurses_loop_finished_main) {
+			pthread_mutex_lock(&flag_mutex);
+			pci_loop_finished = false;
+			pthread_mutex_unlock(&flag_mutex);
+
 			generate_wave(wave_main, freq_main, amp_main);
 
 			pthread_mutex_lock(&flag_mutex);

@@ -1,44 +1,130 @@
 #include "multi_thread.h"
 #include "pass_arg.h"
+#include "ncurses_waves.h"
 
 pthread_mutex_t param_mutex = PTHREAD_MUTEX_INITIALIZER; // A macro
 pthread_mutex_t flag_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t ncurses_mutex = PTHREAD_MUTEX_INITIALIZER;
 
+void turn_off_canonical(){
+    // Turn off canonical mode so whenever we press a char, it is immediately available to the program
+    static struct termios oldt, newt;
+    tcgetattr( STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON);  
+    tcsetattr( STDIN_FILENO, 0, &newt);
+}
 
 void* read_input_thread_1 (void *arg){
     pthread_t tid = pthread_self();
     printf ("Start thread 1 with tid %ld \n", tid);
-    //thread#1 here
+    turn_off_canonical();
 
-    pthread_mutex_lock(&param_mutex);
-    //access/change global variable here
-    pthread_mutex_unlock(&param_mutex);
+    while(1){
+        // Take user input
+
+        switch (getchar_unlocked()) {
+            case KEY_UP: 
+            case 'k':
+                pthread_mutex_lock(&param_mutex);
+                amp += 1.0;
+                pthread_mutex_unlock(&param_mutex);
+            printf("sdsd");
+
+                break;
+            case KEY_DOWN:
+            case 'j':
+                pthread_mutex_lock(&param_mutex);
+                amp -= 1.0;
+                pthread_mutex_unlock(&param_mutex);
+                break;
+            case KEY_LEFT:
+            case 'h':
+                pthread_mutex_lock(&ncurses_mutex);
+                period -= .05;
+                pthread_mutex_unlock(&ncurses_mutex);
+                break;
+            case KEY_RIGHT:
+            case 'l':
+                pthread_mutex_lock(&ncurses_mutex);
+                period += .05;
+                pthread_mutex_unlock(&ncurses_mutex);
+                break;
+            case ' ':
+                pthread_mutex_lock(&ncurses_mutex);
+                phase_shift = 0.0;
+                pthread_mutex_unlock(&ncurses_mutex);
+                break;
+            case '+':
+                pthread_mutex_lock(&ncurses_mutex);
+                delayx += 1;
+                pthread_mutex_unlock(&ncurses_mutex);
+                break;
+            case '-':
+                pthread_mutex_lock(&ncurses_mutex);
+                delayx -= 1;
+                pthread_mutex_unlock(&ncurses_mutex);
+                break;
+            case '1':
+                pthread_mutex_lock(&param_mutex);
+                waveforms = 1;
+                pthread_mutex_unlock(&param_mutex);
+                break;
+            case '2':
+                pthread_mutex_lock(&param_mutex);
+                waveforms = 2;
+                pthread_mutex_unlock(&param_mutex);
+                break;
+            case '3':
+                pthread_mutex_lock(&param_mutex);
+                waveforms = 3;
+                pthread_mutex_unlock(&param_mutex);
+                break;
+            case '4':
+                pthread_mutex_lock(&param_mutex);
+                waveforms = 4;
+                pthread_mutex_unlock(&param_mutex);
+                break;
+            case 'q':
+                endwin();
+                return 0;
+            default: break;
+        }
+    }
 }
 
 void* ncurses_display_thread_2(void *arg){
     pthread_t tid = pthread_self();
     printf ("Start thread 2 with tid %ld \n", tid);
+    
+    // ncurses_init();
+    // while(1){
+    //     //Copy the wave parameters
+    //     pthread_mutex_lock(&param_mutex);
+    //     freq_thread2 = freq;
+    //     amp_thread2 = amp;
+    //     wave_thread2 = waveforms;
+    //     pthread_mutex_unlock(&param_mutex);
 
-    while(1){
-        //Copy the wave parameters
-        pthread_mutex_lock(&param_mutex);
-        freq_thread2 = freq;
-        amp_thread2 = amp;
-        wave_thread2 = waveforms;
-        pthread_mutex_unlock(&param_mutex);
+	// 	//Copy flags
+	// 	pthread_mutex_lock(&flag_mutex);
+	// 	pci_loop_finished_thread2 = pci_loop_finished;
+	// 	ncurses_loop_finished_thread2 = ncurses_loop_finished;
+	// 	pthread_mutex_unlock(&flag_mutex);
+        
 
-		//Copy flags
-		pthread_mutex_lock(&flag_mutex);
-		pci_loop_finished_thread2 = pci_loop_finished;
-		ncurses_loop_finished_thread2 = ncurses_loop_finished;
-		pthread_mutex_unlock(&flag_mutex);
-
-        //thread#2 here
-        if (pci_loop_finished && ncurses_loop_finished) {
+    //     //thread#2 here
+    //     if (pci_loop_finished_thread2 && ncurses_loop_finished_thread2) {
             
-            pthread_mutex_lock(&flag_mutex);
-			ncurses_loop_finished = true;
-			pthread_mutex_unlock(&flag_mutex);
-        }
-    }
+	// 		pthread_mutex_lock(&flag_mutex);
+	// 		ncurses_loop_finished = false;
+	// 		pthread_mutex_unlock(&flag_mutex);
+
+    //         ncurses_generate_wave();
+        
+    //         pthread_mutex_lock(&flag_mutex);
+	// 		ncurses_loop_finished = true;
+	// 		pthread_mutex_unlock(&flag_mutex);
+    //     }
+    // }
 }

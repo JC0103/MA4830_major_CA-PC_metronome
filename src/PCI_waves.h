@@ -36,6 +36,7 @@
 #define 	DA_Data			iobase[4] + 0				// Badr4 + 0
 #define	DA_FIFOCLR		iobase[4] + 2				// Badr4 + 2
 	
+#define STEP 5
 int badr[5];															// PCI 2.2 assigns 6 IO base addresses
 // struct pci_dev_info info;
 void *hdl;
@@ -51,7 +52,6 @@ unsigned int data[100];
 float delta,dummy;
 
 float amplitude;
-int step;
 
 float intercept;
 float linear_func;

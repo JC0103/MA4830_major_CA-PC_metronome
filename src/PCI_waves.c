@@ -44,14 +44,13 @@ void pci_setup(){
 void generate_wave(int waveforms, float freq, float amplitude){
 amplitude = amplitude/100.0 * 0xFFFF;
 intercept = amplitude * 2;
-step = 100;
 
 //Setup waveforms array
   switch (waveforms){
     case 1:
     //Sine
-    delta=(2.0*3.142)/step;
-    for(i=0;i<step;i++) {
+    delta=(2.0*3.142)/STEP;
+    for(i=0;i<STEP;i++) {
       dummy= ((sinf((float)(i*delta))) + 1.0) * amplitude / 2 ;   // A * sin(Bx) A = amplitude, B = frequency
       data[i]= (unsigned) dummy;			// add offset +  scale
       // printf("data%d: %d\n", i, data[i]);
@@ -60,26 +59,26 @@ step = 100;
 
     case 2:
     //Square
-    for (i=0;i<step;i++){
-      dummy = (i< step / 2) ? 0 : 1 * amplitude;
+    for (i=0;i<STEP;i++){
+      dummy = (i< STEP / 2) ? 0 : 1 * amplitude;
       data[i]= (unsigned) dummy;
     }
     break;
 
     case 3:
     //Triangular
-    delta = 1 / step;
-    for(i=0;i<step;i++){
+    delta = 1 / STEP;
+    for(i=0;i<STEP;i++){
       linear_func = i * delta * amplitude * 2;
-      dummy = (i < step / 2) ? linear_func : - linear_func + intercept;
+      dummy = (i < STEP / 2) ? linear_func : - linear_func + intercept;
       data[i]= (unsigned) dummy;
     }
     break;
 
     case 4:
     //Sawtooth
-    delta = 1 / step;
-    for(i=0;i<step;i++){
+    delta = 1 / STEP;
+    for(i=0;i<STEP;i++){
       dummy = i * delta * amplitude;
       data[i]= (unsigned) dummy;
     }
@@ -88,14 +87,14 @@ step = 100;
     default: break; //TODO: pass exception
   }
 
-  // for(i=0;i<step;i++) {
+  // for(i=0;i<STEP;i++) {
   //   out16(DA_CTLREG,0x0a23);			// DA Enable, #0, #1, SW 5V unipolar		2/6 (pg.23)
   //   out16(DA_FIFOCLR, 0);					// Clear DA FIFO  buffer  
   //   out16(DA_Data,(short) data[i]);																																		
   //   out16(DA_CTLREG,0x0a43);			// DA Enable, #1, #1, SW 5V unipolar		2/6 (pg.23)
   //   out16(DA_FIFOCLR, 0);					// Clear DA FIFO  buffer
   //   out16(DA_Data,(short) data[i]);
-  //   delay(1000/(freq * (float)step));   // Min delay: 1 ms , max freq: 10Hz
+  //   delay(1000/(freq * (float)STEP));   // Min delay: 1 ms , max freq: 10Hz
   // }
 }							
 
