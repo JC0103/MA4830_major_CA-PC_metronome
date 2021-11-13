@@ -1,10 +1,20 @@
 #include "pass_arg.h"
 #include "PCI_waves.h"
 #include "multi_thread.h"
+#include <signal.h>
 
+
+void ctrl_c_handler( int signum ) {
+   save_setting();
+   shutdown_pci();
+   exit(1);
+}
+
+   
 int main(int argc, char **argv)
 {
 	int state;
+	signal( SIGINT, ctrl_c_handler );
 	state = parse_arg(argc, argv);
 	if (state == -1) return 0;
 	else if (state == 0){
@@ -59,9 +69,4 @@ int main(int argc, char **argv)
 			pthread_mutex_unlock(&flag_mutex);
 		}
 	}
-
-	// TODO: SIGNINT handler
-	save_setting();
-	shutdown_pci();
-
 }
