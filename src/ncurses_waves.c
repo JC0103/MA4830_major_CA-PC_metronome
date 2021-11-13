@@ -78,6 +78,16 @@ void print_details(WINDOW *wave_details)
   //wrefresh(wave_details);
 }
 
+void print_instructions(WINDOW *instructions)
+{
+  box(instructions, 0, 0);
+  mvwprintw(instructions, 0, 1, " INSTRUCTIONS: ");
+  mvwprintw(instructions, 1, 1, "Press (key) to change VALUE:");
+  mvwprintw(instructions, 3, 1, "    -(s) AMPLITUDE +(w)    ");
+  mvwprintw(instructions, 4, 1, "    -(a) FREQUENCY +(d)    ");
+  //wrefresh(wave_details);
+}
+
 void ncurses_init(){
 
   // Curses init
@@ -100,8 +110,6 @@ void ncurses_init(){
   period = DEFAULT_PERIOD;
 
 }
-
-
 
 void ncurses_generate_wave() {
 
@@ -132,6 +140,10 @@ void ncurses_generate_wave() {
   choices_win = newwin(6, 20, 2, (title_column-20)*1/5);
   print_menu(choices_win);
 
+  WINDOW *instructions;
+  instructions = newwin(6, 30, 2, (title_column-20)*4/5);
+  print_instructions(instructions);
+
   mvprintw(8, title_column/2, "RUNNING: %s", choices[wave_thread2-1]);
 
   refresh();
@@ -139,6 +151,8 @@ void ncurses_generate_wave() {
   wrefresh(wave_details);
   print_menu(choices_win);
   wrefresh(choices_win);
+  print_instructions(instructions);
+  wrefresh(instructions);
 
   if (wave_thread2 == 1 ){
     delayx = ((1/ freq_thread2) * 20000)*period;

@@ -30,5 +30,6 @@ void printwave(float amplitude, float period, short phase_shift, int choice);
 void ncurses_init();
 void ncurses_generate_wave();
 void print_menu(WINDOW *choices_win);
+void print_instructions(WINDOW *instructions);
 
 #endif
