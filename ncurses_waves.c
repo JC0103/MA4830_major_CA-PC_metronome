@@ -3,17 +3,18 @@
 #include <stdlib.h>
 #include <math.h>
 #include <unistd.h>
+#include <string.h>
 
 #define DEFAULT_AMPLITUDE 1
 #define DEFAULT_PERIOD .35
 #define DEFAULT_DELAY_MULTIPLIER 150
-#define BASE_DELAY 1000
+#define BASE_DELAY 100
 
 //Color count
 #define NUM_COLORS 6
 
 typedef unsigned short ushort;
-double x; double y; int period2; double ratio;
+double x; double y; int period2; int global_period2; double ratio; bool boolean;
 
 ushort printwave(double amplitude, double period,
     short phase_shift, ushort color_index, int choice) {
@@ -26,18 +27,17 @@ ushort printwave(double amplitude, double period,
 		
     // Find Y 
     ratio = (2.0*M_PI)/LINES;
-    
     period2 = 40 - (int)(period *40) % 40;
-
+    
     switch (choice){
       case 1:
       // Sine 
-      y = sin(period*x*ratio);
+      y = sin(period*x*ratio) * 0.5;
       break; 
       
       case 2:
       // Square
-      y = ((int)x % period2) < period2/2 ? ratio:-ratio;
+      y = ((int)x % period2) < period2/2 ? 0.5:-0.5;
       break; 
 
       case 3:
@@ -50,31 +50,86 @@ ushort printwave(double amplitude, double period,
       y = ((int)x % (period2*2)) >= period2 ? ((period2 - (int)x % period2) - 0.5*period2) / (float)period2 : (((int)x % period2) - 0.5*period2) / (float)period2;
       break;
 
-      default: break; // TODO: PAss exception
+      default: break;
     }
 
     y *= amplitude; 
-    y += LINES/2;
+    y += (LINES+10)/2;
 
     // Print cell
     mvprintw((int)(y), (int)(x-phase_shift), " ");
+    
+    
   }
-
   return color_index;
-
 }
-unsigned char delayx;
+unsigned int delayx;
 ushort color_index;
 short phase_shift;
 double amplitude;
+float frequency;
 double period;
 int choice;
+int choices_menu_x = 0;
+int choices_menu_y = 0;
+
+char *choices[] = {
+            "(1)Sine_Wave",
+            "(2)Square_Wave",
+            "(3)Sawtooth_Wave",
+            "(4)Triangular_Wave",
+            };
+
+int n_choices = sizeof(choices) / sizeof(char *);
+void print_menu(WINDOW *choices_win);
+
+void print_menu(WINDOW *choices_win)
+{
+  int widths, heights, number_of_choice;	
+
+	widths = 1;
+	heights = 1;
+	box(choices_win, 0, 0);
+  attron(A_BOLD);
+  mvwprintw(choices_win, 0, widths, " CHOICES: ");
+  attroff(A_BOLD);
+  for(number_of_choice = 0; number_of_choice < n_choices; ++number_of_choice)
+	{
+    mvwprintw(choices_win, heights, widths, "%s", choices[number_of_choice]);
+    heights+=1;    
+	}
+  //wrefresh(choices_win);
+}
+
+void print_details(WINDOW *wave_details)
+{
+  box(wave_details, 0, 0);
+  mvwprintw(wave_details, 0, 1, " WAVE_DETAILS: ");
+  mvwprintw(wave_details, 1, 1, "PERIOD:  %8.2f", period);
+  mvwprintw(wave_details, 2, 1, "AMPLITUDE:  %.2f", amplitude);
+  mvwprintw(wave_details, 3, 1, "PHASE: %7d", phase_shift);
+  mvwprintw(wave_details, 4, 1, "FREQUENCY: %.1f", frequency);
+  //wrefresh(wave_details);
+}
+
+void print_instructions(WINDOW *instructions)
+{
+  box(instructions, 0, 0);
+  mvwprintw(instructions, 0, 1, " INSTRUCTIONS: ");
+  mvwprintw(instructions, 1, 1, "Press (key) to change VALUE:");
+  mvwprintw(instructions, 3, 1, "    -(s) AMPLITUDE +(w)    ");
+  mvwprintw(instructions, 4, 1, "    -(a) FREQUENCY +(d)    ");
+  //wrefresh(wave_details);
+}
 
 int main(int argc, char* argv[]) {
 
-  // Curses init
-  WINDOW* screen = initscr();
-  start_color();
+  char title[]="The HOLA Metronome\n";
+  int title_row, title_column; int i; int p;
+  
+	WINDOW* screen = initscr();
+
+  //start_color();
   nodelay(screen, 1);
   cbreak();
   noecho();
@@ -82,27 +137,52 @@ int main(int argc, char* argv[]) {
   keypad(screen, TRUE);
 
   // Dot settings
-  attron(A_BOLD);
+  //attron(A_BOLD);
   attron(A_STANDOUT);
 
   // Wave attributes
   delayx = DEFAULT_DELAY_MULTIPLIER;
   color_index = 0;
   phase_shift = 0;
-  choice = 3;
-  amplitude = (LINES/2)*DEFAULT_AMPLITUDE; 
+  choice = 1;
+  amplitude = (LINES/2)*DEFAULT_AMPLITUDE-5; 
+  frequency = 0.1; 
   period = DEFAULT_PERIOD;
+  
   while (1) {
 
     erase();
-    printwave(amplitude, period, phase_shift, color_index, choice);
 
+		if (choice==1){
+			p = (int)(LINES/period)*10;		
+		}
+		else if (choice!=1){
+		  global_period2 = 40 - (int)(period *40) % 40;
+			p = global_period2;
+		}
+		for (i=0 ; i < p; ++i){
+			printwave(amplitude, period, phase_shift, color_index, choice);
+		} 	
+
+    // Display title at top row and middle column.
+    getmaxyx(stdscr,title_row,title_column);
+    attron(A_BOLD);
+    mvprintw(0, (title_column-strlen(title))/2, "%s", title);
+    attroff(A_BOLD);
+
+    WINDOW *wave_details;
+    wave_details = newwin(6, 20, 2, (title_column-20)/2);
+    print_details(wave_details);
     
-    mvprintw(0, 0, "PERIOD %.2f", period);
-    mvprintw(1, 0, "AMP: %.2f", amplitude);
-    mvprintw(2, 0, "PHASE: %d", phase_shift);
-    mvprintw(3, 0, "DELAY: x%hu", delayx);
-    mvprintw(4, 0, "CHOICE: %d", choice);
+    WINDOW *choices_win;
+    choices_win = newwin(6, 20, 2, (title_column-20)*1/5);
+    print_menu(choices_win);
+
+    WINDOW *instructions;
+    instructions = newwin(6, 30, 2, (title_column-20)*4/5);
+    print_instructions(instructions);
+
+    mvprintw(0, 0, "RUNNING: %s", choices[choice-1]);
 
     refresh();
 
@@ -127,10 +207,10 @@ int main(int argc, char* argv[]) {
         phase_shift = 0.0;
         break;
       case '+':
-        delayx += 1;
+        frequency += 0.1;
         break;
       case '-':
-        delayx -= 1;
+        frequency -= 0.1;
         break;
       case '1':
         choice = 1;
@@ -150,13 +230,41 @@ int main(int argc, char* argv[]) {
       default: break;
     }
 
-    usleep(BASE_DELAY*delayx);
-    phase_shift += 1; 
-
-    if (phase_shift*period >= LINES)
+    print_details(wave_details);
+    wrefresh(wave_details);
+    print_menu(choices_win);
+    wrefresh(choices_win);
+    print_instructions(instructions);
+    wrefresh(instructions);
+    
+    if (choice == 1 ){
+		  delayx = ((1/ frequency) * 20000)*period;
+		  usleep(delayx);
+		  phase_shift += 1;
+      if(phase_shift*period >= LINES){
       phase_shift = 0;
-  }
-
+    	}
+    }
+    if (choice == 2 || choice == 3){
+		  delayx = ((1/ frequency) * 1000000)/period2;
+		  usleep(delayx);
+		  phase_shift += 1;
+      if(phase_shift/period2 >= LINES){
+        //period = period2;
+        phase_shift = 0;
+      }
+    }
+    
+    if (choice == 4 ){
+		  delayx = ((1/ frequency) * 500000)/period2;
+		  usleep(delayx);
+		  phase_shift += 1;
+      if(phase_shift/period2 >= LINES){
+        //period = period2;
+        phase_shift = 0;
+      }
+    }
+}
   endwin();
   return 0; 
 }
