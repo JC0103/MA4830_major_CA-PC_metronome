@@ -28,7 +28,7 @@ int parse_arg(int argc, char **argv)
 		return 0;
 	}
 	while(argv[2*i+1] != NULL){
-		if(argv[2*i+1][1] == '\0'){
+		if(argv[2*i+1][1] == '\0' || argv[2*i+1][0]!='-' || argv[2*i+1][2]!='\0'){
 			printf("Invalid option\n");
 			return -1;
 		}
