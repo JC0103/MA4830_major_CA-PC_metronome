@@ -1,12 +1,8 @@
 #include "PCI_waves.h"
 #include "pass_arg.h"
 
-void pci_setup(){
-step = 100;														
-amplitude = amp/100.0 * 0xFFFF;
-intercept = amplitude * 2;
-printf("sdsd %f", amplitude);
 
+void pci_setup(){													
 
 // printf("\fDemonstration Routine for PCI-DAS 1602\n\n");
 
@@ -46,6 +42,9 @@ printf("sdsd %f", amplitude);
 }
 
 void generate_wave(int waveforms, float freq, float amplitude){
+amplitude = amplitude/100.0 * 0xFFFF;
+intercept = amplitude * 2;
+step = 100;
 
 //Setup waveforms array
   switch (waveforms){

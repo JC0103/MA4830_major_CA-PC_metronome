@@ -51,7 +51,7 @@ unsigned int data[100];
 float delta,dummy;
 
 float amplitude;
-float step;
+int step;
 
 float intercept;
 float linear_func;
