@@ -50,7 +50,7 @@ ushort printwave(double amplitude, double period,
       y = ((int)x % (period2*2)) >= period2 ? ((period2 - (int)x % period2) - 0.5*period2) / (float)period2 : (((int)x % period2) - 0.5*period2) / (float)period2;
       break;
 
-      default: break;
+      default: break; // TODO: PAss exception
     }
 
     y *= amplitude; 
