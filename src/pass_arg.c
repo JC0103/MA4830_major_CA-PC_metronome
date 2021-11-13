@@ -22,7 +22,7 @@ int parse_arg(int argc, char **argv)
 {
 
 	int i = 0;
-
+	int valid = 1;
 	if(argc <= 2){
 		printf("No argument input\n");
 		return 0;
@@ -36,23 +36,23 @@ int parse_arg(int argc, char **argv)
 		switch(argv[2*i+1][1]){
 			case 'w': {
 				if(!strcmp(argv[2*i+2],"sine")){
-					printf("Generating Sine wave...\n"); 
+					printf("Sine wave was chosen\n"); 
 					waveforms = 1; 	break;
 				}
 
 				else if(!strcmp(argv[2*i+2],"square")){
-					printf("Generating Square wave...\n");
+					printf("Square wave was was chosen\n");
 					waveforms = 2; break;
 
 				}
 
 				else if(!strcmp(argv[2*i+2],"triangular")){
-					printf("Generating Triangular wave...\n");
+					printf("Triangular wave was chosen\n");
 					waveforms = 3; break;
 				}
 
 				else if(!strcmp(argv[2*i+2],"sawtooth")){
-					printf("Generating Sawtooth wave...\n");
+					printf("Sawtooth wave was chosen\n");
 					waveforms = 4; break;
 				}
 
@@ -63,8 +63,9 @@ int parse_arg(int argc, char **argv)
 					printf("\tsine\t\tgenerate sine wave\n");
 					printf("\tsquare\t\tgenerate square wave\n");
 					printf("\ttriangular\tgenerate triangular wave\n");
-					printf("\tsawtooth\tgenerate sawtooth wave\n");
-					return -1;
+					printf("\tsawtooth\tgenerate sawtooth wave\n\n");
+					valid = 0;
+					break;
 				}
 
 			}
@@ -72,11 +73,16 @@ int parse_arg(int argc, char **argv)
 			case 'f':{
 				if(check_input(argv[2*i+2])){
 					freq = string2float(argv[2*i+2]);
-					printf("Frequency = %.3f Hz\n", freq);
-					break;
+					if(freq>=0.1 && freq<=10){
+						printf("Frequency = %.3f Hz\n", freq);
+						break;
+					}
+					else{
+						printf("Frequency value out of range, valid range: (0.1 <= f <= 10)\n\n");valid = 0;break;
+					}
 				}
 				else{
-					printf("Invalid frequency value\n");
+					printf("Invalid frequency value\n");						
 					return -1;
 				}
 			}
@@ -84,8 +90,14 @@ int parse_arg(int argc, char **argv)
 			case 'a':{
 				if(check_input(argv[2*i+2])){
 					amp = string2float(argv[2*i+2]);
-					printf("Amplitude = %.3f \n", amp);
-					break;
+					if(amp>=0 && amp<=100){
+						printf("Amplitude = %.3f \n", amp);
+						break;
+					}
+					else{
+						printf("Amplitude value out of range, valid range: (0 <= a <= 100)\n\n");valid = 0;break;
+
+					}
 				}
 				else{
 					printf("Invalid amplitude value\n");
@@ -96,9 +108,10 @@ int parse_arg(int argc, char **argv)
 		}
 		i++;
 	}
+	if(valid == 0)
+		return -1;
 	return 1;
 }
-
 void parse_arg_default(){
 	if (waveforms == 0){
 		char temp[20];	int r;
