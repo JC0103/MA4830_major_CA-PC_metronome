@@ -26,13 +26,15 @@ void* read_input_thread_1 (void *arg){
             case KEY_UP: 
             case 'w':
                 pthread_mutex_lock(&param_mutex);
-                amp += 1.0;
+                if (abs(amp - 100.0) < FLOAT_EPSILON) break;
+                else amp += 1.0;
                 pthread_mutex_unlock(&param_mutex);
                 break;
             case KEY_DOWN:
             case 's':
                 pthread_mutex_lock(&param_mutex);
-                amp -= 1.0;
+                if (abs(amp - 1.0) < FLOAT_EPSILON) break;
+                else amp -= 1.0;
                 pthread_mutex_unlock(&param_mutex);
                 break;
             case KEY_LEFT:
@@ -47,7 +49,6 @@ void* read_input_thread_1 (void *arg){
                 pthread_mutex_lock(&ncurses_mutex);
                 if (abs(freq - 10.0) < FLOAT_EPSILON) break;
                 else freq += 0.1;
-                printf("%f", freq);
                 pthread_mutex_unlock(&ncurses_mutex);
                 break;
             case ' ':

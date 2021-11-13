@@ -10,7 +10,7 @@
 #include "multi_thread.h"
 #include "pass_arg.h"
 
-#define DEFAULT_AMPLITUDE 10
+#define DEFAULT_AMPLITUDE 1
 #define DEFAULT_PERIOD .35
 #define DEFAULT_DELAY_MULTIPLIER 150
 #define BASE_DELAY 100

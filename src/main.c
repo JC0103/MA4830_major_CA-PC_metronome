@@ -1,6 +1,7 @@
 #include "pass_arg.h"
 #include "PCI_waves.h"
 #include "multi_thread.h"
+#include "ncurses_waves.h"
 #include <signal.h>
 
 

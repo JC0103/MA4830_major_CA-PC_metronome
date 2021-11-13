@@ -97,7 +97,6 @@ void ncurses_init(){
   delayx = DEFAULT_DELAY_MULTIPLIER;
   phase_shift = 0;
   choice = 1;
-  amplitude_thread2 = amp_thread2 / 100 * (LINES/2)*DEFAULT_AMPLITUDE-5; 
   period = DEFAULT_PERIOD;
 
 }
@@ -114,6 +113,7 @@ void ncurses_generate_wave() {
     global_period2 = 40 - (int)(period *40) % 40;
     p = global_period2;
   }
+   amplitude_thread2 = amp_thread2/100 * ((LINES)*DEFAULT_AMPLITUDE-12); 
   for (a=0 ; a < p; ++a){
     printwave(amplitude_thread2, period, phase_shift, wave_thread2);
   }
