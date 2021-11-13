@@ -5,9 +5,13 @@
 
 
 void ctrl_c_handler( int signum ) {
-   save_setting();
-   shutdown_pci();
-   exit(1);
+	printf("Terminating program...\n");
+	save_setting();
+	shutdown_pci();
+ 	 endwin();
+    // Reset back to canonical mode
+    // tcsetattr( STDIN_FILENO, 0, &oldt);
+   	exit(1);
 }
 
    
@@ -55,7 +59,6 @@ int main(int argc, char **argv)
 		wave_main = waveforms;
 		freq_main = freq;
 		amp_main = amp;
-		printf("Wavesforms: %d\n", wave_main);
 		pthread_mutex_unlock(&param_mutex);
 
 		//Copy flags

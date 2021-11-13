@@ -177,7 +177,7 @@ int ask_for_default_setting(){
 		c = toupper(getchar());
 		if ( c == 'Y') return 1;
 		else if (c == 'N'){
-			printf("Usage:  ./main [OPTIONS] INPUT\n\n");
+			printf("\nUsage:  ./main [OPTIONS] INPUT\n\n");
 			printf("Options:\n\n");
 			printf("\t-w\tinput one of the waveform: sine, square, triangular, sawtooth\n");
 			printf("\t-f\tinput frequency in Hz\n\t-a\tinput amplitude\n\n");

@@ -8,7 +8,6 @@ pthread_mutex_t ncurses_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void turn_off_canonical(){
     // Turn off canonical mode so whenever we press a char, it is immediately available to the program
-    static struct termios oldt, newt;
     tcgetattr( STDIN_FILENO, &oldt);
     newt = oldt;
     newt.c_lflag &= ~(ICANON);  
@@ -23,31 +22,32 @@ void* read_input_thread_1 (void *arg){
     while(1){
         // Take user input
 
-        switch (getchar_unlocked()) {
+        switch (getchar()) {
             case KEY_UP: 
-            case 'k':
+            case 'w':
                 pthread_mutex_lock(&param_mutex);
                 amp += 1.0;
                 pthread_mutex_unlock(&param_mutex);
-            printf("sdsd");
-
                 break;
             case KEY_DOWN:
-            case 'j':
+            case 's':
                 pthread_mutex_lock(&param_mutex);
                 amp -= 1.0;
                 pthread_mutex_unlock(&param_mutex);
                 break;
             case KEY_LEFT:
-            case 'h':
+            case 'a':
                 pthread_mutex_lock(&ncurses_mutex);
-                period -= .05;
+                if (abs(freq - 0.1) < FLOAT_EPSILON) break;
+                else freq -= 0.1;
                 pthread_mutex_unlock(&ncurses_mutex);
                 break;
             case KEY_RIGHT:
-            case 'l':
+            case 'd':
                 pthread_mutex_lock(&ncurses_mutex);
-                period += .05;
+                if (abs(freq - 10.0) < FLOAT_EPSILON) break;
+                else freq += 0.1;
+                printf("%f", freq);
                 pthread_mutex_unlock(&ncurses_mutex);
                 break;
             case ' ':
@@ -55,14 +55,14 @@ void* read_input_thread_1 (void *arg){
                 phase_shift = 0.0;
                 pthread_mutex_unlock(&ncurses_mutex);
                 break;
-            case '+':
+            case '=':
                 pthread_mutex_lock(&ncurses_mutex);
-                delayx += 1;
+                period += .05;
                 pthread_mutex_unlock(&ncurses_mutex);
                 break;
             case '-':
                 pthread_mutex_lock(&ncurses_mutex);
-                delayx -= 1;
+                period -= .05;
                 pthread_mutex_unlock(&ncurses_mutex);
                 break;
             case '1':
@@ -85,9 +85,6 @@ void* read_input_thread_1 (void *arg){
                 waveforms = 4;
                 pthread_mutex_unlock(&param_mutex);
                 break;
-            case 'q':
-                endwin();
-                return 0;
             default: break;
         }
     }
@@ -97,34 +94,35 @@ void* ncurses_display_thread_2(void *arg){
     pthread_t tid = pthread_self();
     printf ("Start thread 2 with tid %ld \n", tid);
     
-    // ncurses_init();
-    // while(1){
-    //     //Copy the wave parameters
-    //     pthread_mutex_lock(&param_mutex);
-    //     freq_thread2 = freq;
-    //     amp_thread2 = amp;
-    //     wave_thread2 = waveforms;
-    //     pthread_mutex_unlock(&param_mutex);
+    ncurses_init();
+    while(1){
+        //Copy the wave parameters
+        pthread_mutex_lock(&param_mutex);
+        freq_thread2 = freq;
+        amp_thread2 = amp;
+        wave_thread2 = waveforms;
+        pthread_mutex_unlock(&param_mutex);
 
-	// 	//Copy flags
-	// 	pthread_mutex_lock(&flag_mutex);
-	// 	pci_loop_finished_thread2 = pci_loop_finished;
-	// 	ncurses_loop_finished_thread2 = ncurses_loop_finished;
-	// 	pthread_mutex_unlock(&flag_mutex);
+		//Copy flags
+		pthread_mutex_lock(&flag_mutex);
+		pci_loop_finished_thread2 = pci_loop_finished;
+		ncurses_loop_finished_thread2 = ncurses_loop_finished;
+		pthread_mutex_unlock(&flag_mutex);
         
 
-    //     //thread#2 here
-    //     if (pci_loop_finished_thread2 && ncurses_loop_finished_thread2) {
+        //thread#2 here
+        if (pci_loop_finished_thread2 && ncurses_loop_finished_thread2) {
             
-	// 		pthread_mutex_lock(&flag_mutex);
-	// 		ncurses_loop_finished = false;
-	// 		pthread_mutex_unlock(&flag_mutex);
+			pthread_mutex_lock(&flag_mutex);
+			ncurses_loop_finished = false;
+			pthread_mutex_unlock(&flag_mutex);
 
-    //         ncurses_generate_wave();
+            ncurses_generate_wave();
         
-    //         pthread_mutex_lock(&flag_mutex);
-	// 		ncurses_loop_finished = true;
-	// 		pthread_mutex_unlock(&flag_mutex);
-    //     }
-    // }
+            pthread_mutex_lock(&flag_mutex);
+			ncurses_loop_finished = true;
+			pthread_mutex_unlock(&flag_mutex);
+        }
+    }
+    endwin();
 }

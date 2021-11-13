@@ -27,9 +27,8 @@ ushort printwave(double amplitude, double period,
 		
     // Find Y 
     ratio = (2.0*M_PI)/LINES;
-    //period2 = 40 - (int)(period *40) % 40;
     period2 = 40 - (int)(period *40) % 40;
-
+    
     switch (choice){
       case 1:
       // Sine 
@@ -115,11 +114,10 @@ void print_details(WINDOW *wave_details)
 
 int main(int argc, char* argv[]) {
 
-  char title[]="<----------- The REDY Metronome ----------->\n";
-  int title_row, title_column; int i;
-
-  // Curses init
-  WINDOW* screen = initscr();
+  char title[]="The HOLA Metronome\n";
+  int title_row, title_column; int i; int p;
+  
+	WINDOW* screen = initscr();
 
   //start_color();
   nodelay(screen, 1);
@@ -129,6 +127,7 @@ int main(int argc, char* argv[]) {
   keypad(screen, TRUE);
 
   // Dot settings
+  //attron(A_BOLD);
   attron(A_STANDOUT);
 
   // Wave attributes
@@ -144,9 +143,16 @@ int main(int argc, char* argv[]) {
 
     erase();
 
-    global_period2 = 40 - (int)(period *40) % 40;
-    //for (i=0 ; i < global_period2; ++i){
-    printwave(amplitude, period, phase_shift, color_index, choice);  	
+		if (choice==1){
+			p = (int)(LINES/period)*10;		
+		}
+		else if (choice!=1){
+		  global_period2 = 40 - (int)(period *40) % 40;
+			p = global_period2;
+		}
+		for (i=0 ; i < p; ++i){
+			printwave(amplitude, period, phase_shift, color_index, choice);
+		} 	
 
     // Display title at top row and middle column.
     getmaxyx(stdscr,title_row,title_column);
@@ -214,8 +220,16 @@ int main(int argc, char* argv[]) {
     wrefresh(wave_details);
     print_menu(choices_win);
     wrefresh(choices_win);
-
-    if (choice != 1 ){
+    
+    if (choice == 1 ){
+		  delayx = ((1/ frequency) * 20000)*period;
+		  usleep(delayx);
+		  phase_shift += 1;
+      if(phase_shift*period >= LINES){
+      phase_shift = 0;
+    	}
+    }
+    if (choice == 2 || choice == 3){
 		  delayx = ((1/ frequency) * 1000000)/period2;
 		  usleep(delayx);
 		  phase_shift += 1;
@@ -224,15 +238,16 @@ int main(int argc, char* argv[]) {
         phase_shift = 0;
       }
     }
-
-    if (choice == 1 ){
-		  delayx = ((1/ frequency) * 100000)*period;
+    
+    if (choice == 4 ){
+		  delayx = ((1/ frequency) * 500000)/period2;
 		  usleep(delayx);
 		  phase_shift += 1;
-      if(phase_shift*period >= LINES){
-      phase_shift = 0;
+      if(phase_shift/period2 >= LINES){
+        //period = period2;
+        phase_shift = 0;
+      }
     }
-  }
 }
   endwin();
   return 0; 

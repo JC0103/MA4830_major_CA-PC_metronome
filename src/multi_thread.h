@@ -17,7 +17,9 @@ float freq_main, freq_thread2;
 float amp_main, amp_thread2;
 int wave_main, wave_thread2;
 
+static struct termios oldt, newt;
 void turn_off_canonical();
+
 void* read_input_thread_1 (void *arg);
 void* ncurses_display_thread_2(void *arg); 
 
