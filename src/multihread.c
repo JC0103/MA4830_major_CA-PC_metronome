@@ -22,7 +22,7 @@ void* read_input_thread_1 (void *arg){
     while(1){
         // Take user input
 
-        switch (getchar()) {
+        switch (getchar_unlocked()) {
             case KEY_UP: 
             case 'w':
                 pthread_mutex_lock(&param_mutex);

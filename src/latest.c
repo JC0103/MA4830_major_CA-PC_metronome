@@ -74,7 +74,8 @@ void print_details(WINDOW *wave_details)
   mvwprintw(wave_details, 1, 1, "PERIOD:  %8.2f", period);
   mvwprintw(wave_details, 2, 1, "AMPLITUDE:  %.2f", amp_thread2);
   mvwprintw(wave_details, 3, 1, "PHASE: %7d", phase_shift);
-  mvwprintw(wave_details, 4, 1, "FREQUENCY: %.1f", freq_thread2);
+  mvwprintw(wave_details, 4, 1, "FREQUENCY: %d", delayx);
+  //wrefresh(wave_details);
 }
 
 void print_instructions(WINDOW *instructions)
@@ -84,7 +85,7 @@ void print_instructions(WINDOW *instructions)
   mvwprintw(instructions, 1, 1, "Press (key) to change VALUE:");
   mvwprintw(instructions, 3, 1, "    -(s) AMPLITUDE +(w)    ");
   mvwprintw(instructions, 4, 1, "    -(a) FREQUENCY +(d)    ");
-  
+  //wrefresh(wave_details);
 }
 
 void ncurses_init(){
@@ -113,12 +114,10 @@ void ncurses_init(){
 void ncurses_generate_wave() {
 
   erase();
-
-  if (wave_thread2==1){
-/*    p = (int)(LINES/period)*10;	*/
-    p = (int)2*M_PI*period;	
+  if (choice==1){
+    p = (int)(LINES/period)*10;		
   }
-  else if (wave_thread2!=1){
+  else if (choice!=1){
     global_period2 = 40 - (int)(period *40) % 40;
     p = global_period2;
   }
@@ -152,7 +151,8 @@ void ncurses_generate_wave() {
   wrefresh(wave_details);
   print_menu(choices_win);
   wrefresh(choices_win);
-
+  print_instructions(instructions);
+  wrefresh(instructions);
 // printf("%f", freq_thread2);
   if (wave_thread2 == 1 ){
     delayx = ((1/ freq_thread2) * 20000)*period;
