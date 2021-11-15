@@ -6,7 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define FLOAT_EPSILON 1e-6
+#define FLOAT_EPSILON 1e-5
 
 
 float freq;         // 0.1-10.0 Hz

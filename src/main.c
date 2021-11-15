@@ -57,8 +57,7 @@ int main(int argc, char **argv)
 	pci_setup();
 
 	// Declare threads' ID
-	pthread_t thread1, thread2;
-	pci_loop_finished = true; ncurses_loop_finished = true;
+	pci_loop_finished = 1; ncurses_loop_finished = 1;
 	printf("Start main thread with tid %ld \n", pthread_self());
 
 	// Create thread1
@@ -87,13 +86,13 @@ int main(int argc, char **argv)
 
 		if (pci_loop_finished_main && ncurses_loop_finished_main) {
 			pthread_mutex_lock(&flag_mutex);
-			pci_loop_finished = false;
+			pci_loop_finished = 0;
 			pthread_mutex_unlock(&flag_mutex);
 
 			generate_wave(wave_main, freq_main, amp_main);
 
 			pthread_mutex_lock(&flag_mutex);
-			pci_loop_finished = true;
+			pci_loop_finished = 1;
 			pthread_mutex_unlock(&flag_mutex);
 		}
 	}

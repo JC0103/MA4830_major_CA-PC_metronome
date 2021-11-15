@@ -26,28 +26,28 @@ void* read_input_thread_1 (void *arg){
             case KEY_UP: 
             case 'w':
                 pthread_mutex_lock(&param_mutex);
-                if (abs(amp - 100.0) < FLOAT_EPSILON) break;
+                if (fabs(amp - 100.0) < FLOAT_EPSILON);
                 else amp += 1.0;
                 pthread_mutex_unlock(&param_mutex);
                 break;
             case KEY_DOWN:
             case 's':
                 pthread_mutex_lock(&param_mutex);
-                if (abs(amp - 1.0) < FLOAT_EPSILON) break;
+                if (fabs(amp - 1.0) < FLOAT_EPSILON);
                 else amp -= 1.0;
                 pthread_mutex_unlock(&param_mutex);
                 break;
             case KEY_LEFT:
             case 'a':
                 pthread_mutex_lock(&ncurses_mutex);
-                if (abs(freq - 0.1) < FLOAT_EPSILON) break;
+                if (fabs(freq - 0.100) < FLOAT_EPSILON);
                 else freq -= 0.1;
                 pthread_mutex_unlock(&ncurses_mutex);
                 break;
             case KEY_RIGHT:
             case 'd':
                 pthread_mutex_lock(&ncurses_mutex);
-                if (abs(freq - 10.0) < FLOAT_EPSILON) break;
+                if (fabs(freq - 10.0) < FLOAT_EPSILON);
                 else freq += 0.1;
                 pthread_mutex_unlock(&ncurses_mutex);
                 break;
@@ -115,13 +115,13 @@ void* ncurses_display_thread_2(void *arg){
         if (pci_loop_finished_thread2 && ncurses_loop_finished_thread2) {
             
 			pthread_mutex_lock(&flag_mutex);
-			ncurses_loop_finished = false;
+			ncurses_loop_finished = 0;
 			pthread_mutex_unlock(&flag_mutex);
 
             ncurses_generate_wave();
         
             pthread_mutex_lock(&flag_mutex);
-			ncurses_loop_finished = true;
+			ncurses_loop_finished = 1;
 			pthread_mutex_unlock(&flag_mutex);
         }
     }

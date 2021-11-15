@@ -1,9 +1,9 @@
 #include "ncurses_waves.h"
 const char *choices[] = { 
-                          "Sine_Wave",
-                          "Square_Wave",
-                          "Sawtooth_Wave",
-                          "Triangular_Wave",
+                          "Sine_Wave         ",
+                          "Square_Wave       ",
+                          "Sawtooth_Wave     ",
+                          "Triangular_Wave   ",
                         };
 char title[]="The Redy Metronome\n";
 
@@ -64,17 +64,16 @@ void print_menu(WINDOW *choices_win)
     mvwprintw(choices_win, heights, widths, "%s", choices[number_of_choice]);
     heights+=1;    
 	}
-  //wrefresh(choices_win);
 }
 
 void print_details(WINDOW *wave_details)
 {
   box(wave_details, 0, 0);
   mvwprintw(wave_details, 0, 1, " WAVE_DETAILS: ");
-  mvwprintw(wave_details, 1, 1, "PERIOD:  %8.2f", period);
-  mvwprintw(wave_details, 2, 1, "AMPLITUDE:  %.2f", amp_thread2);
-  mvwprintw(wave_details, 3, 1, "PHASE: %7d", phase_shift);
-  mvwprintw(wave_details, 4, 1, "FREQUENCY: %.1f", freq_thread2);
+  mvwprintw(wave_details, 1, 1, "PERIOD:  %8.2f ", period);
+  mvwprintw(wave_details, 2, 1, "AMPLITUDE:  %.2f ", amp_thread2);
+  mvwprintw(wave_details, 3, 1, "PHASE: %7d    ", phase_shift);
+  mvwprintw(wave_details, 4, 1, "FREQUENCY: %.1f    ", freq_thread2);
 }
 
 void print_instructions(WINDOW *instructions)
@@ -82,15 +81,16 @@ void print_instructions(WINDOW *instructions)
   box(instructions, 0, 0);
   mvwprintw(instructions, 0, 1, " INSTRUCTIONS: ");
   mvwprintw(instructions, 1, 1, "Press (key) to change VALUE:");
-  mvwprintw(instructions, 3, 1, "    -(s) AMPLITUDE +(w)    ");
-  mvwprintw(instructions, 4, 1, "    -(a) FREQUENCY +(d)    ");
+  mvwprintw(instructions, 2, 1, "                            ");
+  mvwprintw(instructions, 3, 1, "    -(s) AMPLITUDE +(w)     ");
+  mvwprintw(instructions, 4, 1, "    -(a) FREQUENCY +(d)     ");
   
 }
 
 void ncurses_init(){
 
   // Curses init
-  WINDOW* screen = initscr();
+  screen = initscr();
 
   // Intial setup
   nodelay(screen, 1);
@@ -108,7 +108,6 @@ void ncurses_init(){
   phase_shift = 0;
   choice = 1;
   period = DEFAULT_PERIOD;
-
 }
 
 void ncurses_generate_wave() {
@@ -134,25 +133,22 @@ void ncurses_generate_wave() {
   mvprintw(0, (title_column-strlen(title))/2, "%s", title);
   attroff(A_BOLD);
 
-  WINDOW *wave_details;
-  wave_details = newwin(6, 20, 2, (title_column-20)/2);
-  print_details(wave_details);
-  
-  WINDOW *choices_win;
-  choices_win = newwin(6, 20, 2, (title_column-20)*1/5);
-  print_menu(choices_win);
+  wave_details = derwin(screen, 6, 20, 2, (title_column-20)/2);
 
-  WINDOW *instructions;
-  instructions = newwin(6, 30, 2, (title_column-20)*4/5);
-  print_instructions(instructions);
+  choices_win = derwin(screen, 6, 20, 2, (title_column-20)*1/5);
+
+  instructions = derwin(screen,6, 30, 2, (title_column-20)*4/5);
 
   mvprintw(0, 0, "RUNNING: %s", choices[wave_thread2-1]);
 
-  refresh();
+  
   print_details(wave_details);
-  wrefresh(wave_details);
+  // wrefresh(wave_details);
   print_menu(choices_win);
-  wrefresh(choices_win);
+  // wrefresh(choices_win);
+  print_instructions(instructions);
+  // wrefresh(instructions);
+  wrefresh(screen);
 
 // printf("%f", freq_thread2);
   if (wave_thread2 == 1 ){

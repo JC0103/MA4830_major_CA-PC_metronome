@@ -32,4 +32,11 @@ void ncurses_generate_wave();
 void print_menu(WINDOW *choices_win);
 void print_instructions(WINDOW *instructions);
 
+WINDOW* screen;
+WINDOW *wave_details;
+WINDOW *choices_win;
+WINDOW *instructions;
+
+
+
 #endif
