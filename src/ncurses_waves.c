@@ -92,6 +92,7 @@ void ncurses_init(){
   // Curses init
   WINDOW* screen = initscr();
 
+  // Intial setup
   nodelay(screen, 1);
   cbreak();
   noecho();

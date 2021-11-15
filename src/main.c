@@ -4,12 +4,12 @@
 #include "ncurses_waves.h"
 #include <signal.h>
 
-
+// SIGINT Handler (Ctrl+C) to save setting parameters, detach PCI and close ncurses window
 void ctrl_c_handler( int signum ) {
 	printf("Terminating program...\n");
 	save_setting();
 	shutdown_pci();
- 	 endwin();
+ 	endwin();
     // Reset back to canonical mode
     // tcsetattr( STDIN_FILENO, 0, &oldt);
    	exit(1);
@@ -19,17 +19,34 @@ void ctrl_c_handler( int signum ) {
 int main(int argc, char **argv)
 {
 	int state;
+
+	// Call signal handling function when signal - SIGINT is detected
 	signal( SIGINT, ctrl_c_handler );
+
+	// Process parsed arguments
 	state = parse_arg(argc, argv);
-	if (state == -1) return 0;
+
+	// Invalid option or arguments and exit program
+	if (state == -1) {print_instruction(); return 0;}
+
+	// No argument parse
 	else if (state == 0){
+		
+		// Ask user to use default setting or not
 		state = ask_for_default_setting();
-		if (state == -1) return 0;
+		// User choose not to use default setting and exit program
+		if (state == -1) {print_instruction(); return 0;}
 	}
+
+	// Have argument parse
 	else if (state == 1){
+		// Check if there is amplitude or frequency input
 		if (freq < FLOAT_EPSILON || amp < FLOAT_EPSILON){
 			printf("No input for freqeuncy and/or amplitude\n");
+			// Prompt to ask user use default setting or not
 			state = ask_for_default_setting();
+			if (state == -1) {print_instruction(); return 0;}
+
 		}
 	}
 

@@ -61,4 +61,9 @@ void save_setting();
  */
 int ask_for_default_setting();
 
+/**
+ * Print instruction on how to parse argument and its limit. 
+ */
+void print_instruction();
+
 #endif
