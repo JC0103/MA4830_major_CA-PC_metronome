@@ -115,8 +115,8 @@ void ncurses_generate_wave() {
   erase();
 
   if (wave_thread2==1){
-/*    p = (int)(LINES/period)*10;	*/
-    p = (int)2*M_PI*period;	
+    p = (int)10/period;	
+/*    p = (int)2*M_PI*period;	*/
   }
   else if (wave_thread2!=1){
     global_period2 = 40 - (int)(period *40) % 40;
