@@ -2,8 +2,8 @@
 const char *choices[] = { 
                           "Sine_Wave         ",
                           "Square_Wave       ",
-                          "Sawtooth_Wave     ",
-                          "Triangular_Wave   ",
+                          "Triangular_Wave     ",
+                          "Sawtooth_Wave   ",
                         };
 char title[]="The Redy Metronome\n";
 
