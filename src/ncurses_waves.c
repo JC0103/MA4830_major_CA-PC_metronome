@@ -2,8 +2,8 @@
 const char *choices[] = { 
                           "Sine_Wave         ",
                           "Square_Wave       ",
-                          "Triangular_Wave     ",
-                          "Sawtooth_Wave   ",
+                          "Triangular_Wave   ",
+                          "Sawtooth_Wave     ",
                         };
 char title[]="The Redy Metronome\n";
 
@@ -47,10 +47,12 @@ void printwave(float amplitude, float period, short phase_shift, int choice) {
     mvprintw((int)(y), (int)(x-phase_shift), " ");
   }
 }
+
 void print_menu(WINDOW *choices_win)
 {
   int widths, heights, number_of_choice;	
 
+  // Set up the container box
 	widths = 1;
 	heights = 1;
 	box(choices_win, 0, 0);
@@ -61,6 +63,7 @@ void print_menu(WINDOW *choices_win)
   n_choices = sizeof(choices) / sizeof(char *);
   for(number_of_choice = 0; number_of_choice < n_choices; ++number_of_choice)
 	{
+    // Print all the available waveform choices
     mvwprintw(choices_win, heights, widths, "%s", choices[number_of_choice]);
     heights+=1;    
 	}
@@ -68,7 +71,10 @@ void print_menu(WINDOW *choices_win)
 
 void print_details(WINDOW *wave_details)
 {
+  // Set up the container box
   box(wave_details, 0, 0);
+
+  // Print all the parameters of the waveform
   mvwprintw(wave_details, 0, 1, " WAVE_DETAILS: ");
   mvwprintw(wave_details, 1, 1, "PERIOD:  %8.2f ", period);
   mvwprintw(wave_details, 2, 1, "AMPLITUDE:  %.2f ", amp_thread2);
@@ -78,7 +84,10 @@ void print_details(WINDOW *wave_details)
 
 void print_instructions(WINDOW *instructions)
 {
+  // Set up the container box
   box(instructions, 0, 0);
+
+  // Print respective keys to change amplitude and frequency
   mvwprintw(instructions, 0, 1, " INSTRUCTIONS: ");
   mvwprintw(instructions, 1, 1, "Press (key) to change VALUE:");
   mvwprintw(instructions, 2, 1, "                            ");
@@ -112,11 +121,13 @@ void ncurses_init(){
 
 void ncurses_generate_wave() {
 
+  // Erase previous outputs
   erase();
 
+  // Set up parameters for generate wave
   if (wave_thread2==1){
     p = (int)10/period;	
-/*    p = (int)2*M_PI*period;	*/
+
   }
   else if (wave_thread2!=1){
     global_period2 = 40 - (int)(period *40) % 40;
@@ -133,24 +144,25 @@ void ncurses_generate_wave() {
   mvprintw(0, (title_column-strlen(title))/2, "%s", title);
   attroff(A_BOLD);
 
+  // Set these boxes as the sub-window of the main window (screen) and their sizes
   wave_details = derwin(screen, 6, 20, 2, (title_column-20)/2);
 
   choices_win = derwin(screen, 6, 20, 2, (title_column-20)*1/5);
 
   instructions = derwin(screen,6, 30, 2, (title_column-20)*4/5);
 
+  // Print current type of waveform
   mvprintw(0, 0, "RUNNING: %s", choices[wave_thread2-1]);
 
-  
+  // Print all the boxes
   print_details(wave_details);
-  // wrefresh(wave_details);
   print_menu(choices_win);
-  // wrefresh(choices_win);
   print_instructions(instructions);
-  // wrefresh(instructions);
+
+  // Refresh the curses window
   wrefresh(screen);
 
-// printf("%f", freq_thread2);
+  // Delay according to the frequency and the type of waveforms
   if (wave_thread2 == 1 ){
     delayx = ((1/ freq_thread2) * 20000)*period;
     usleep(delayx);

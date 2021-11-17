@@ -1,3 +1,3 @@
-Waveforms: 1
-Frequency(Hz): 3.399999
-Amplitude: 50.000000
+Waveforms: 4
+Frequency(Hz): 1.000000
+Amplitude: 28.000000

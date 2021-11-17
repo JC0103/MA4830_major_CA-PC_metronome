@@ -56,8 +56,19 @@ float amplitude;
 float intercept;
 float linear_func;
 
+/**
+ * Configure PCI settings
+ */
 void pci_setup();
+
+/**
+ * Generate waves through PCI based on the setting parameters
+ */
 void generate_wave(int waveforms, float freq, float amp);
+
+/**
+ * Reset DAC to default (5V) and detach PCI
+ */
 void shutdown_pci();
 
 #endif

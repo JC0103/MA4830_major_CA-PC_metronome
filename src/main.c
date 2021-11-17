@@ -14,7 +14,6 @@ void ctrl_c_handler( int signum ) {
     // tcsetattr( STDIN_FILENO, 0, &oldt);
    	exit(1);
 }
-
    
 int main(int argc, char **argv)
 {
@@ -70,9 +69,7 @@ int main(int argc, char **argv)
 
 	while(1) {
 		//Copy the wave parameters
-		sleep(1);
 		pthread_mutex_lock(&param_mutex);
-		
 		wave_main = waveforms;
 		freq_main = freq;
 		amp_main = amp;
@@ -84,11 +81,13 @@ int main(int argc, char **argv)
 		ncurses_loop_finished_main = ncurses_loop_finished;
 		pthread_mutex_unlock(&flag_mutex);
 
+		// Generate next cycle only when both previous waveform cycle in PCI and terminal finished
 		if (pci_loop_finished_main && ncurses_loop_finished_main) {
 			pthread_mutex_lock(&flag_mutex);
 			pci_loop_finished = 0;
 			pthread_mutex_unlock(&flag_mutex);
 
+			// Generate waveforms through PCI
 			generate_wave(wave_main, freq_main, amp_main);
 
 			pthread_mutex_lock(&flag_mutex);
