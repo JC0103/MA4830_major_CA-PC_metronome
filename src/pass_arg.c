@@ -9,12 +9,13 @@ float string2float(char *str)
 // Check if the input is in numbers or dot
 int check_input(char *str)
 {
-	int i = 0;
+	int i = 0; int point_count = 0;
 	while(str[i] != '\0' && str[i] != 0){
 		if (!((str[i]>=48 && str[i]<=57)||str[i]==46)){
 			return 0;
 		}
-		// TODO: handle input with more than one dot
+		if (str[i]==46) point_count++;
+		if (point_count >= 2) return 0;
 		i++;
 	}
 	return 1;
