@@ -9,9 +9,8 @@ void ctrl_c_handler( int signum ) {
 	printf("Terminating program...\n");
 	save_setting();
 	shutdown_pci();
+	// Turn off ncurses window
  	endwin();
-    // Reset back to canonical mode
-    // tcsetattr( STDIN_FILENO, 0, &oldt);
    	exit(1);
 }
    
