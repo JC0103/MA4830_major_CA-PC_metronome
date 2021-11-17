@@ -172,7 +172,7 @@ void ncurses_generate_wave() {
     phase_shift = 0;
     }
   }
-  if (wave_thread2 == 2 || wave_thread2 == 3){
+  if (wave_thread2 == 2 || wave_thread2 == 4){
     delayx = ((1/ freq_thread2) * 1000000)/period2;
     usleep(delayx);
     phase_shift += 1;
@@ -181,7 +181,7 @@ void ncurses_generate_wave() {
     }
   }
   
-  if (wave_thread2 == 4 ){
+  if (wave_thread2 == 3 ){
     delayx = ((1/ freq_thread2) * 500000)/period2;
     usleep(delayx);
     phase_shift += 1;
