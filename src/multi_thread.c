@@ -46,18 +46,18 @@ void* read_input_thread_1 (void *arg){
             case KEY_LEFT:
             case 'a':
             // Decrease frequency (Min at 0.1 Hz)
-                pthread_mutex_lock(&ncurses_mutex);
+                pthread_mutex_lock(&param_mutex);
                 if (fabs(freq - 0.100) < FLOAT_EPSILON);
                 else freq -= 0.1;
-                pthread_mutex_unlock(&ncurses_mutex);
+                pthread_mutex_unlock(&param_mutex);
                 break;
             case KEY_RIGHT:
             case 'd':
             // Increase frequency (Max at 10 Hz)
-                pthread_mutex_lock(&ncurses_mutex);
+                pthread_mutex_lock(&param_mutex);
                 if (fabs(freq - 10.0) < FLOAT_EPSILON);
                 else freq += 0.1;
-                pthread_mutex_unlock(&ncurses_mutex);
+                pthread_mutex_unlock(&param_mutex);
                 break;
             case ' ':
             // Reset phase shift to zero

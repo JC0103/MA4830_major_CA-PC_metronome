@@ -29,7 +29,7 @@ int wave_main, wave_thread2;
 static struct termios oldt, newt;
 
 /** 
- * Change to non-cannonical terminal input.
+ * Change to non-canonical terminal input.
  * In canonical mode,  read on the serial port will not return until a new line, EOF or EOL character is received
 */
 void turn_off_canonical();
