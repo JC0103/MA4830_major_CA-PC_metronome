@@ -4,7 +4,6 @@
 
 // Macro to intialise mutexes
 pthread_mutex_t param_mutex = PTHREAD_MUTEX_INITIALIZER; 
-pthread_mutex_t flag_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t ncurses_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void turn_off_canonical(){
@@ -55,7 +54,7 @@ void* read_input_thread_1 (void *arg){
             case 'd':
             // Increase frequency (Max at 10 Hz)
                 pthread_mutex_lock(&param_mutex);
-                if (fabs(freq - 10.0) < FLOAT_EPSILON);
+                if (fabs(freq - 8.0) < FLOAT_EPSILON);
                 else freq += 0.1;
                 pthread_mutex_unlock(&param_mutex);
                 break;
@@ -121,27 +120,8 @@ void* ncurses_display_thread_2(void *arg){
         wave_thread2 = waveforms;
         pthread_mutex_unlock(&param_mutex);
 
-		//Copy flags
-		pthread_mutex_lock(&flag_mutex);
-		pci_loop_finished_thread2 = pci_loop_finished;
-		ncurses_loop_finished_thread2 = ncurses_loop_finished;
-		pthread_mutex_unlock(&flag_mutex);
-        
-
-        // Generate next cycle only when both previous waveform cycle in PCI and terminal finished
-        if (pci_loop_finished_thread2 && ncurses_loop_finished_thread2) {
-            
-			pthread_mutex_lock(&flag_mutex);
-			ncurses_loop_finished = 0;
-			pthread_mutex_unlock(&flag_mutex);
-
-            // General waves and display some parameters in terminal
-            ncurses_generate_wave();
-        
-            pthread_mutex_lock(&flag_mutex);
-			ncurses_loop_finished = 1;
-			pthread_mutex_unlock(&flag_mutex);
-        }
+        // General waves and display some parameters in terminal
+        ncurses_generate_wave();
     }
     // Close the ncurses window
     endwin();

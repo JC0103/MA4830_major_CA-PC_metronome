@@ -85,13 +85,13 @@ int parse_arg(int argc, char **argv)
 					// Change string data type to float
 					freq = string2float(argv[2*i+2]);
 					// Set limit for frequency input
-					if(freq>=0.1 && freq<=10){
+					if(freq>=0.1 && freq<=8){
 						printf("Frequency = %.1f Hz\n", freq);
 						break;
 					}
 					// Handle out of bound inputs
 					else{
-						printf("Frequency value out of range, valid range: (0.1 <= f <= 10)\n\n");valid = 0;break;
+						printf("Frequency value out of range, valid range: (0.1 <= f <= 8.0)\n\n");valid = 0;break;
 					}
 				}
 				// Handle invalid input (not numbers)
@@ -192,7 +192,7 @@ void save_setting(){
     fp = fopen("setting.txt", "w+");  // create file and write or overwrite if file existed
 	// Write the txt file with latest parameters
     sprintf(buffer, "Waveforms: %d\nFrequency(Hz): %f\nAmplitude: %f", waveforms, freq, amp);
-    fputs(buffer, fp);
+	fputs(buffer, fp);
 	// Close file
     fclose(fp);
 }
@@ -216,6 +216,6 @@ void print_instruction(){
 	printf("\nUsage:  ./main [OPTIONS] INPUT\n\n");
 	printf("Options:\n\n");
 	printf("\t-w\tinput one of the waveform: sine, square, triangular, sawtooth\n");
-	printf("\t-f\tinput frequency in Hz: 0.1 - 10\n\t-a\tinput amplitude in percentage: 1 - 100\n\n");
+	printf("\t-f\tinput frequency in Hz: 0.1 - 8\n\t-a\tinput amplitude in percentage: 1 - 100\n\n");
 	printf("Sample: ./main -w [waveform] -a [value] -f [value]\n\n");
 }

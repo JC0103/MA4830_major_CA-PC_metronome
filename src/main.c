@@ -6,11 +6,12 @@
 
 // SIGINT Handler (Ctrl+C) to save setting parameters, detach PCI and close ncurses window
 void ctrl_c_handler( int signum ) {
-	printf("Terminating program...\n");
-	save_setting();
-	shutdown_pci();
 	// Turn off ncurses window
  	endwin();
+	printf("Terminating program...\n");
+	if ( amp != 0 && freq != 0) save_setting();
+	shutdown_pci();
+
    	exit(1);
 }
    
@@ -44,7 +45,6 @@ int main(int argc, char **argv)
 			// Prompt to ask user use default setting or not
 			state = ask_for_default_setting();
 			if (state == -1) {print_instruction(); return 0;}
-
 		}
 	}
 
@@ -54,18 +54,25 @@ int main(int argc, char **argv)
 
 	pci_setup();
 
-	// Declare threads' ID
-	pci_loop_finished = 1; ncurses_loop_finished = 1;
-	printf("Start main thread with tid %ld \n", pthread_self());
+	main_thread = pthread_self();
+	printf("Start main thread with tid %ld \n", main_thread);
 
+	// Set thread 2 priority to 15
+    pthread_attr_init(&attr);
+    sch_params.sched_priority = 15;
+    pthread_attr_setschedparam(&attr, &sch_params);
+	
 	// Create thread1
     thread_create = pthread_create(&thread1, NULL, &read_input_thread_1, NULL);
      if (thread_create) { printf("ERROR; return code from pthread_create() for thread 1 is %d\n", thread_create); exit(-1); } 
 	// Create thread2
-	thread_create = pthread_create(&thread2, NULL, &ncurses_display_thread_2, NULL);
-     if (thread_create) { printf("ERROR; return code from pthread_create() for thread 2 is %d\n", thread_create); exit(-1); } 
-
-
+	thread_create = pthread_create(&thread2, &attr, &ncurses_display_thread_2, NULL);
+    if (thread_create) { printf("ERROR; return code from pthread_create() for thread 2 is %d\n", thread_create); exit(-1); } 
+    
+	// Set main thread priority to 15
+	sch_params.sched_priority = 15;
+	pthread_setschedparam(main_thread, SCHED_FIFO, &sch_params);	
+	
 	while(1) {
 		//Copy the wave parameters
 		pthread_mutex_lock(&param_mutex);
@@ -74,24 +81,7 @@ int main(int argc, char **argv)
 		amp_main = amp;
 		pthread_mutex_unlock(&param_mutex);
 
-		//Copy flags
-		pthread_mutex_lock(&flag_mutex);
-		pci_loop_finished_main = pci_loop_finished;
-		ncurses_loop_finished_main = ncurses_loop_finished;
-		pthread_mutex_unlock(&flag_mutex);
-
-		// Generate next cycle only when both previous waveform cycle in PCI and terminal finished
-		if (pci_loop_finished_main && ncurses_loop_finished_main) {
-			pthread_mutex_lock(&flag_mutex);
-			pci_loop_finished = 0;
-			pthread_mutex_unlock(&flag_mutex);
-
-			// Generate waveforms through PCI
-			generate_wave(wave_main, freq_main, amp_main);
-
-			pthread_mutex_lock(&flag_mutex);
-			pci_loop_finished = 1;
-			pthread_mutex_unlock(&flag_mutex);
-		}
+		// Generate waveforms through PCI
+		generate_wave(wave_main, freq_main, amp_main);
 	}
 }

@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-// #include <hw/pci.h>  
-// #include <hw/inout.h>
-// #include <sys/neutrino.h>
+#include <hw/pci.h>  
+#include <hw/inout.h>
+#include <sys/neutrino.h>
 #include <sys/mman.h>
 #include <math.h>
 #include <time.h>
@@ -36,14 +36,14 @@
 #define 	DA_Data			iobase[4] + 0				// Badr4 + 0
 #define	DA_FIFOCLR		iobase[4] + 2				// Badr4 + 2
 	
-#define STEP 5
+#define STEP 50
 int badr[5];															// PCI 2.2 assigns 6 IO base addresses
-// struct pci_dev_info info;
+struct pci_dev_info info;
 void *hdl;
 
-// uintptr_t iobase[6];
-// uintptr_t dio_in;
-// uint16_t adc_in;
+uintptr_t iobase[6];
+uintptr_t dio_in;
+uint16_t adc_in;
 	
 unsigned int i,count;
 unsigned short chan;

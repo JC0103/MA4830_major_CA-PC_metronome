@@ -7,18 +7,19 @@
 #include <termios.h> 
 
 // Thread ID's
-pthread_t thread1, thread2;
+pthread_t main_thread, thread1, thread2;
+
+// Thread scheduling params
+struct sched_param sch_params;
+int t;
+pthread_attr_t attr;
+
 
 // Storage for checking thread create successful
 int thread_create;
 
-//3 mutexes for setting parameters, loop finsihed flag and ncurses parameters
-pthread_mutex_t param_mutex, flag_mutex, ncurses_mutex;
-
-// Loop / Cycle finished flag and their copies
-int pci_loop_finished, ncurses_loop_finished;
-int pci_loop_finished_main, pci_loop_finished_thread2;
-int ncurses_loop_finished_main, ncurses_loop_finished_thread2;
+//2 mutexes for setting parameters and ncurses parameters
+pthread_mutex_t param_mutex, ncurses_mutex;
 
 // Setting parameters to be used in respective thread
 float freq_main, freq_thread2; 
@@ -45,5 +46,6 @@ void* read_input_thread_1 (void *arg);
  * @param arg A dummy pointer
  */
 void* ncurses_display_thread_2(void *arg); 
+
 
 #endif
